@@ -1,10 +1,6 @@
 # AI Academy Agentic System
 
-> **📢 Repository Restructured (Phase 0 Complete)**: This project has been upgraded from a basic RAG chatbot (HW4) to a full agentic AI system. The codebase has been restructured for modularity and extensibility. See [MASTER_PLAN.md](MASTER_PLAN.md) for the complete implementation roadmap.
->
-> **Current Status**: Phase 0 Complete ✅ | Next: Phase 1 - Baseline Integration
-
-A Python 3.12-based autonomous agent system built on top of Retrieval-Augmented Generation (RAG). Features include contextual data pipelines, reasoning loops with self-reflection, tool-calling capabilities, and evaluation frameworks.
+A Python 3.12-based autonomous agent system built on top of Retrieval-Augmented Generation (RAG). The system features a modular architecture with support for contextual data pipelines, reasoning loops with self-reflection, tool-calling capabilities, and evaluation frameworks.
 
 ## Features
 
@@ -43,37 +39,36 @@ python -m scripts.build_index stats
 
 ```
 ai-academy-agent-capstone-project/
-├── agent/                  # Core agent logic (Phase 4-6)
+├── agent/                  # Core agent logic
 │   ├── orchestrator.py    # Main agent coordinator
 │   ├── reasoning.py       # Planning and decomposition
 │   ├── reflection.py      # Self-critique
 │   └── memory.py          # State tracking
-├── tools/                  # Tool-calling system (Phase 5)
+├── tools/                  # Tool-calling system
 │   ├── registry.py        # Tool registration
 │   ├── rag_tools.py       # Vector search tools
 │   └── utility_tools.py   # Calculator, date, etc.
-├── rag/                    # RAG modules (from HW4)
+├── rag/                    # RAG modules
 │   ├── config.py          # Configuration management
 │   ├── loaders.py         # Document loading
 │   ├── embeddings.py      # Vector embeddings
 │   ├── retriever.py       # Document retrieval
 │   └── prompts.py         # Prompt templates
-├── evaluation/            # Metrics and testing (Phase 7)
+├── evaluation/            # Metrics and testing
 │   ├── metrics.py         # Scoring functions
 │   └── evaluator.py       # Evaluation runner
 ├── scripts/               # CLI tools
 │   ├── build_index.py     # Index building
-│   ├── demo.py            # Agent demo (Phase 8)
-│   └── legacy_chatbot.py  # Original HW4 chatbot
+│   ├── demo.py            # Agent demo
+│   └── legacy_chatbot.py  # RAG chatbot
 ├── data/                  # Training data
-│   ├── hw4_docs/          # HW4 documents
-│   ├── ai_academy/        # AI Academy materials (Phase 2)
+│   ├── hw4_docs/          # Document storage
+│   ├── ai_academy/        # Additional materials
 │   └── transcripts/       # Cached MP4 transcripts
 ├── docs/                  # Architecture documentation
 ├── logs/                  # Agent execution logs
 ├── embeddings/            # ChromaDB storage
 ├── .env.example           # Environment template
-├── MASTER_PLAN.md         # Implementation roadmap
 ├── COMMANDS.md            # Command reference
 ├── requirements.txt       # Dependencies
 └── README.md              # This file
@@ -179,17 +174,17 @@ See `.env.example` for a complete configuration template with detailed comments.
 
 ### Building the Index
 
-After adding your PDF and MP4 files to the `data/` directory:
+After adding your PDF and MP4 files to the `data/hw4_docs/` directory:
 
 ```bash
 # Build or update the index (incremental)
-python -m src.build_index build
+python -m scripts.build_index build
 
 # Rebuild from scratch (if you changed chunking parameters)
-python -m src.build_index build --rebuild
+python -m scripts.build_index build --rebuild
 
 # Check index statistics
-python -m src.build_index stats
+python -m scripts.build_index stats
 ```
 
 **Output example:**
@@ -209,16 +204,16 @@ After building the index, you can query the chatbot:
 
 ```bash
 # Ask a question (default command)
-python -m src.chatbot "What is a vector database?"
+python -m scripts.legacy_chatbot "What is a vector database?"
 
 # Or use explicit query command
-python -m src.chatbot query "What is RAG?"
+python -m scripts.legacy_chatbot query "What is RAG?"
 
 # Retrieve more context chunks
-python -m src.chatbot query "How does retrieval work?" --top-k 10
+python -m scripts.legacy_chatbot query "How does retrieval work?" --top-k 10
 
 # Use custom log file
-python -m src.chatbot query "Explain embeddings" --log-file my_queries.log
+python -m scripts.legacy_chatbot query "Explain embeddings" --log-file my_queries.log
 ```
 
 The chatbot will:
@@ -232,26 +227,26 @@ The chatbot will:
 
 ```bash
 # Test embeddings generation
-python -m src.embeddings
+python -m rag.embeddings
 
 # Test document loading and chunking
-python -m src.data_loader
+python -m rag.loaders
 
 # Test retrieval from index
-python -m src.retriever
+python -m rag.retriever
 ```
 
 ### Advanced Usage
 
 ```bash
 # Use custom parameters (requires rebuild)
-CHUNK_SIZE=1500 CHUNK_OVERLAP=300 python -m src.build_index build --rebuild
+CHUNK_SIZE=1500 CHUNK_OVERLAP=300 python -m scripts.build_index build --rebuild
 
 # Use different embedding model
-EMBEDDING_MODEL=text-embedding-3-large python -m src.build_index build --rebuild
+EMBEDDING_MODEL=text-embedding-3-large python -m scripts.build_index build --rebuild
 
 # Get more retrieval results
-TOP_K=10 python -c "from src.retriever import retrieve_relevant_chunks; ..."
+TOP_K=10 python -c "from rag.retriever import retrieve_relevant_chunks; ..."
 ```
 
 ### Query Logging
@@ -283,7 +278,7 @@ SOURCES (2 file(s)):
 
 **Custom log file:**
 ```bash
-python -m src.chatbot query "question" --log-file custom_queries.log
+python -m scripts.legacy_chatbot query "question" --log-file custom_queries.log
 ```
 
 📘 **For the complete command reference with troubleshooting guides, see [COMMANDS.md](COMMANDS.md)**
@@ -294,20 +289,20 @@ python -m src.chatbot query "question" --log-file custom_queries.log
 
 | Command | Purpose |
 |---------|---------|
-| `python -m src.build_index build` | Build or update the search index |
-| `python -m src.build_index stats` | Show index statistics |
-| `python -m src.build_index build --rebuild` | Rebuild index from scratch |
-| `python -m src.build_index clear` | Delete all indexed documents |
+| `python -m scripts.build_index build` | Build or update the search index |
+| `python -m scripts.build_index stats` | Show index statistics |
+| `python -m scripts.build_index build --rebuild` | Rebuild index from scratch |
+| `python -m scripts.build_index clear` | Delete all indexed documents |
 
 ### Chatbot Queries
 
 | Command | Purpose |
 |---------|---------|
-| `python -m src.chatbot "question"` | Ask a question (default command) |
-| `python -m src.chatbot query "question"` | Ask a question (explicit) |
-| `python -m src.chatbot query "question" --top-k 10` | Retrieve more context chunks |
-| `python -m src.chatbot query "question" --log-file path` | Use custom log file |
-| `python -m src.chatbot build-index` | Build index via chatbot CLI |
+| `python -m scripts.legacy_chatbot "question"` | Ask a question (default command) |
+| `python -m scripts.legacy_chatbot query "question"` | Ask a question (explicit) |
+| `python -m scripts.legacy_chatbot query "question" --top-k 10` | Retrieve more context chunks |
+| `python -m scripts.legacy_chatbot query "question" --log-file path` | Use custom log file |
+| `python -m scripts.legacy_chatbot build-index` | Build index via chatbot CLI |
 
 ## Contributing
 

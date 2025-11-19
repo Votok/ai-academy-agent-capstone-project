@@ -214,3 +214,7 @@ data/transcripts/.partial/  # Partial transcript chunks (progress saving)
 embeddings/
 
 .DS_Store
+
+# Planning documents (generated)
+MASTER_PLAN.md
+plan_*.md

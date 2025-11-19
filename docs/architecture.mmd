@@ -1,0 +1,30 @@
+%% Architecture diagram for AI Agentic System
+%% Created: Phase 0
+%% To be expanded in future phases
+
+graph TB
+    User[User Query] --> Orchestrator[Agent Orchestrator]
+
+    Orchestrator --> Reasoning[Reasoning Module]
+    Orchestrator --> RAG[RAG Pipeline]
+    Orchestrator --> Tools[Tool Registry]
+    Orchestrator --> Reflection[Reflection Module]
+
+    Reasoning --> |Plan Steps| Orchestrator
+
+    RAG --> Embeddings[Embeddings]
+    RAG --> VectorDB[(ChromaDB)]
+    RAG --> Retriever[Retriever]
+
+    Tools --> RAGTools[RAG Tools]
+    Tools --> UtilityTools[Utility Tools]
+    Tools --> FormatTools[Format Tools]
+
+    Reflection --> |Critique| Orchestrator
+
+    Orchestrator --> Response[Final Response]
+
+    style Orchestrator fill:#f9f,stroke:#333,stroke-width:4px
+    style RAG fill:#bbf,stroke:#333,stroke-width:2px
+    style Tools fill:#bfb,stroke:#333,stroke-width:2px
+    style Reflection fill:#fbb,stroke:#333,stroke-width:2px

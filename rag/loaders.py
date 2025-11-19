@@ -19,7 +19,7 @@ from tqdm import tqdm
 import ffmpeg
 from openai import OpenAI
 
-from src.config import (
+from rag.config import (
     DATA_DIR,
     CHUNK_SIZE,
     CHUNK_OVERLAP,

@@ -206,15 +206,29 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# Data directories (source documents not tracked in git)
 data/
-data/transcripts/  # Cached MP4 transcriptions (regenerated from source files)
-data/transcripts/.partial/  # Partial transcript chunks (progress saving)
+!data/.gitkeep
+!data/ai_academy/
+!data/hw4_docs/
+data/hw4_docs/*
+data/ai_academy/*
 
 # ChromaDB vector database storage (regenerated from source documents)
 embeddings/
+
+# Agent logs
+logs/*.log
+
+# Evaluation reports
+evaluation/reports/*.json
+evaluation/reports/*.html
+evaluation/reports/*.txt
 
 .DS_Store
 
 # Planning documents (generated)
 MASTER_PLAN.md
 plan_*.md
+CLAUDE.md
+docs/PHASE_NOTES.md

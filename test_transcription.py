@@ -11,7 +11,7 @@ from pathlib import Path
 import tempfile
 import ffmpeg
 from openai import OpenAI
-from src.config import OPENAI_API_KEY, WHISPER_MODEL, DATA_DIR
+from rag.config import OPENAI_API_KEY, WHISPER_MODEL, DATA_DIR
 
 
 def extract_audio(mp4_path: Path, output_path: Path) -> None:

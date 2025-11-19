@@ -1,0 +1,21 @@
+{
+  "test_queries": [
+    {
+      "id": 1,
+      "query": "What is RAG architecture?",
+      "expected_topics": ["retrieval", "augmented", "generation", "context"],
+      "difficulty": "easy"
+    },
+    {
+      "id": 2,
+      "query": "Explain the difference between vector databases and traditional databases",
+      "expected_topics": ["embeddings", "similarity search", "SQL", "NoSQL"],
+      "difficulty": "medium"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-19",
+    "version": "1.0",
+    "description": "Test queries for agent evaluation (Phase 7)"
+  }
+}

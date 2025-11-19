@@ -16,7 +16,7 @@ from tenacity import (
 )
 from openai import APIError, RateLimitError, APITimeoutError
 
-from src.config import OPENAI_API_KEY, EMBEDDING_MODEL
+from rag.config import OPENAI_API_KEY, EMBEDDING_MODEL
 
 
 # Global embeddings client (lazy initialization)

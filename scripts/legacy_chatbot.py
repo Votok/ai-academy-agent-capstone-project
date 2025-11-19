@@ -18,9 +18,9 @@ from typing import Dict, List, Optional
 import typer
 from openai import OpenAI
 
-from src.config import OPENAI_API_KEY, GPT_MODEL, TOP_K, DATA_DIR, CHROMA_DB_DIR
-from src.retriever import retrieve_relevant_chunks
-from src.prompts import build_messages
+from rag.config import OPENAI_API_KEY, GPT_MODEL, TOP_K, DATA_DIR, CHROMA_DB_DIR
+from rag.retriever import retrieve_relevant_chunks
+from rag.prompts import build_messages
 
 # Configure logging
 logging.basicConfig(

@@ -6,9 +6,9 @@ This script orchestrates the full pipeline:
 3. Store in ChromaDB vector database
 
 Usage:
-    python -m src.build_index              # Build/update index
-    python -m src.build_index --rebuild    # Clear and rebuild from scratch
-    python -m src.build_index --stats      # Show index statistics only
+    python -m scripts.build_index              # Build/update index
+    python -m scripts.build_index --rebuild    # Clear and rebuild from scratch
+    python -m scripts.build_index --stats      # Show index statistics only
 """
 
 import sys
@@ -19,9 +19,9 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from src.config import DATA_DIR, CHROMA_DB_DIR, print_config
-from src.data_loader import load_and_chunk_documents
-from src.retriever import index_documents, get_collection_stats, clear_index
+from rag.config import DATA_DIR, CHROMA_DB_DIR, print_config
+from rag.loaders import load_and_chunk_documents
+from rag.retriever import index_documents, get_collection_stats, clear_index
 
 
 app = typer.Typer(help="RAG Chatbot Index Builder")

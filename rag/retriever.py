@@ -15,8 +15,8 @@ from chromadb.config import Settings
 from langchain_core.documents import Document
 from tqdm import tqdm
 
-from src.config import CHROMA_DB_DIR, TOP_K
-from src.embeddings import embed_texts, embed_query
+from rag.config import CHROMA_DB_DIR, TOP_K
+from rag.embeddings import embed_texts, embed_query
 
 
 # Global ChromaDB client and collection (lazy initialization)

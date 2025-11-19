@@ -1,6 +1,10 @@
-# AI Academy RAG Chatbot
+# AI Academy Agentic System
 
-A Python 3.12-based chatbot application using Retrieval-Augmented Generation (RAG) to provide intelligent responses based on document knowledge bases.
+> **📢 Repository Restructured (Phase 0 Complete)**: This project has been upgraded from a basic RAG chatbot (HW4) to a full agentic AI system. The codebase has been restructured for modularity and extensibility. See [MASTER_PLAN.md](MASTER_PLAN.md) for the complete implementation roadmap.
+>
+> **Current Status**: Phase 0 Complete ✅ | Next: Phase 1 - Baseline Integration
+
+A Python 3.12-based autonomous agent system built on top of Retrieval-Augmented Generation (RAG). Features include contextual data pipelines, reasoning loops with self-reflection, tool-calling capabilities, and evaluation frameworks.
 
 ## Features
 
@@ -23,14 +27,14 @@ cp .env.example .env
 # 2. Activate virtual environment
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 
-# 3. Add your documents to data/ directory
+# 3. Add your documents to data/hw4_docs/ directory
 # (PDFs and MP4 files)
 
 # 4. Build the search index
-python -m src.build_index build
+python -m scripts.build_index build
 
 # 5. Verify index was created
-python -m src.build_index stats
+python -m scripts.build_index stats
 ```
 
 📘 **For complete command reference, see [COMMANDS.md](COMMANDS.md)**
@@ -38,25 +42,41 @@ python -m src.build_index stats
 ## Project Structure
 
 ```
-ai-academy-rag-chatbot/
-├── src/                    # Source code modules
-│   ├── __init__.py
-│   ├── build_index.py     # Index building CLI
-│   ├── chatbot.py         # Main chatbot logic with RAG pipeline
+ai-academy-agent-capstone-project/
+├── agent/                  # Core agent logic (Phase 4-6)
+│   ├── orchestrator.py    # Main agent coordinator
+│   ├── reasoning.py       # Planning and decomposition
+│   ├── reflection.py      # Self-critique
+│   └── memory.py          # State tracking
+├── tools/                  # Tool-calling system (Phase 5)
+│   ├── registry.py        # Tool registration
+│   ├── rag_tools.py       # Vector search tools
+│   └── utility_tools.py   # Calculator, date, etc.
+├── rag/                    # RAG modules (from HW4)
 │   ├── config.py          # Configuration management
-│   ├── data_loader.py     # Document loading and processing
-│   ├── embeddings.py      # Vector embeddings handling
-│   ├── prompts.py         # Prompt templates for RAG
-│   └── retriever.py       # Document retrieval logic
-├── data/                   # Store your documents here (PDFs, MP4s)
+│   ├── loaders.py         # Document loading
+│   ├── embeddings.py      # Vector embeddings
+│   ├── retriever.py       # Document retrieval
+│   └── prompts.py         # Prompt templates
+├── evaluation/            # Metrics and testing (Phase 7)
+│   ├── metrics.py         # Scoring functions
+│   └── evaluator.py       # Evaluation runner
+├── scripts/               # CLI tools
+│   ├── build_index.py     # Index building
+│   ├── demo.py            # Agent demo (Phase 8)
+│   └── legacy_chatbot.py  # Original HW4 chatbot
+├── data/                  # Training data
+│   ├── hw4_docs/          # HW4 documents
+│   ├── ai_academy/        # AI Academy materials (Phase 2)
 │   └── transcripts/       # Cached MP4 transcripts
-├── embeddings/            # ChromaDB vector database storage
-├── .env.example           # Environment variables template
-├── .gitignore            # Git ignore rules
-├── COMMANDS.md           # Complete command reference
-├── queries.log           # Query history log (auto-generated)
-├── requirements.txt      # Python dependencies
-└── README.md             # This file
+├── docs/                  # Architecture documentation
+├── logs/                  # Agent execution logs
+├── embeddings/            # ChromaDB storage
+├── .env.example           # Environment template
+├── MASTER_PLAN.md         # Implementation roadmap
+├── COMMANDS.md            # Command reference
+├── requirements.txt       # Dependencies
+└── README.md              # This file
 ```
 
 ## Prerequisites

@@ -100,6 +100,83 @@ Higher values provide more context but increase token usage.
 """
 
 # ============================================================================
+# Agent Configuration (NEW - Phase 1)
+# ============================================================================
+
+AGENT_MODEL: str = _get_env_var("AGENT_MODEL", default="gpt-4-turbo-preview")
+"""GPT model to use for agent reasoning and planning.
+Can be different from GPT_MODEL for cost optimization.
+Examples: 'gpt-4-turbo-preview', 'gpt-4', 'gpt-3.5-turbo'
+"""
+
+AGENT_TEMPERATURE: float = float(_get_env_var("AGENT_TEMPERATURE", default="0.7"))
+"""Temperature setting for agent model (0.0-1.0).
+Higher values make output more creative, lower values more deterministic.
+"""
+
+# ============================================================================
+# Reasoning Loop Configuration (NEW - Phase 1)
+# ============================================================================
+
+MAX_REASONING_STEPS: int = int(_get_env_var("MAX_REASONING_STEPS", default="5"))
+"""Maximum number of planning/reasoning iterations the agent can perform.
+Prevents infinite loops while allowing multi-step reasoning.
+"""
+
+REFLECTION_ENABLED: bool = _get_env_var("REFLECTION_ENABLED", default="true").lower() == "true"
+"""Enable self-reflection loop where agent critiques its own outputs.
+Improves quality but increases API calls and latency.
+"""
+
+MIN_CONFIDENCE_SCORE: float = float(_get_env_var("MIN_CONFIDENCE_SCORE", default="0.7"))
+"""Minimum confidence score (0.0-1.0) for agent to proceed with an action.
+Higher values make agent more cautious.
+"""
+
+# ============================================================================
+# Tool Calling Configuration (NEW - Phase 1)
+# ============================================================================
+
+TOOL_TIMEOUT_SECONDS: int = int(_get_env_var("TOOL_TIMEOUT_SECONDS", default="30"))
+"""Maximum time in seconds for tool execution before timeout.
+Prevents hanging on long-running or stuck operations.
+"""
+
+ALLOW_DANGEROUS_TOOLS: bool = _get_env_var("ALLOW_DANGEROUS_TOOLS", default="false").lower() == "true"
+"""Allow tools that can modify filesystem or make network requests.
+Should be False for production/untrusted environments.
+"""
+
+# ============================================================================
+# Logging Configuration (NEW - Phase 1)
+# ============================================================================
+
+LOG_LEVEL: str = _get_env_var("LOG_LEVEL", default="INFO").upper()
+"""Logging level for agent operations.
+Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+"""
+
+LOG_DIR: Path = Path(_get_env_var("LOG_DIR", default="./logs"))
+"""Directory for storing agent execution logs and traces."""
+
+AGENT_TRACE_ENABLED: bool = _get_env_var("AGENT_TRACE_ENABLED", default="true").lower() == "true"
+"""Enable detailed tracing of agent reasoning steps.
+Useful for debugging and evaluation but increases log size.
+"""
+
+# ============================================================================
+# Evaluation Configuration (NEW - Phase 1)
+# ============================================================================
+
+EVAL_MODEL: str = _get_env_var("EVAL_MODEL", default="gpt-4-turbo-preview")
+"""GPT model to use for LLM-as-judge evaluation.
+Should be a strong model for accurate assessment.
+"""
+
+EVAL_DATASET: Path = Path(_get_env_var("EVAL_DATASET", default="./evaluation/test_queries.json"))
+"""Path to JSON file containing test queries for evaluation."""
+
+# ============================================================================
 # Configuration Validation
 # ============================================================================
 
@@ -147,6 +224,19 @@ def print_config() -> None:
     print(f"Chunk Size: {CHUNK_SIZE}")
     print(f"Chunk Overlap: {CHUNK_OVERLAP}")
     print(f"Top K Results: {TOP_K}")
+    print("\n=== Agent Configuration ===")
+    print(f"Agent Model: {AGENT_MODEL}")
+    print(f"Agent Temperature: {AGENT_TEMPERATURE}")
+    print(f"Max Reasoning Steps: {MAX_REASONING_STEPS}")
+    print(f"Reflection Enabled: {REFLECTION_ENABLED}")
+    print(f"Min Confidence Score: {MIN_CONFIDENCE_SCORE}")
+    print(f"Tool Timeout (seconds): {TOOL_TIMEOUT_SECONDS}")
+    print(f"Allow Dangerous Tools: {ALLOW_DANGEROUS_TOOLS}")
+    print(f"Log Level: {LOG_LEVEL}")
+    print(f"Log Directory: {LOG_DIR.absolute()}")
+    print(f"Agent Trace Enabled: {AGENT_TRACE_ENABLED}")
+    print(f"Eval Model: {EVAL_MODEL}")
+    print(f"Eval Dataset: {EVAL_DATASET.absolute()}")
     print("=" * 40)
 
 

@@ -22,6 +22,7 @@ from rich.table import Table
 from rag.config import DATA_DIR, CHROMA_DB_DIR, print_config
 from rag.loaders import load_and_chunk_documents
 from rag.retriever import index_documents, get_collection_stats, clear_index
+from rag.collections import get_all_stats
 
 
 app = typer.Typer(help="RAG Chatbot Index Builder")
@@ -41,6 +42,12 @@ def build(
         "--stats",
         "-s",
         help="Show index statistics only (no building)"
+    ),
+    collection: str = typer.Option(
+        "course_materials",
+        "--collection",
+        "-c",
+        help="Collection name to build/update"
     ),
     data_dir: Path = typer.Option(
         None,
@@ -68,7 +75,7 @@ def build(
     # Show stats if requested
     if stats_only:
         try:
-            stats = get_collection_stats()
+            stats = get_collection_stats(collection)
             _display_stats(stats)
         except Exception as e:
             console.print(f"[red]Error getting stats: {e}[/red]")
@@ -92,12 +99,13 @@ def build(
         sys.exit(1)
 
     console.print(f"\n[green]Found {len(pdf_files)} PDF(s) and {len(mp4_files)} MP4(s)[/green]")
+    console.print(f"[cyan]Target collection: {collection}[/cyan]")
 
     # Clear index if rebuild requested
     if rebuild:
-        console.print("\n[yellow]Clearing existing index...[/yellow]")
+        console.print("\n[yellow]Clearing existing collection...[/yellow]")
         try:
-            clear_index()
+            clear_index(collection)
         except Exception as e:
             console.print(f"[red]Error clearing index: {e}[/red]")
             sys.exit(1)
@@ -119,7 +127,7 @@ def build(
     # Step 2: Generate embeddings and index
     console.print("\n[bold cyan]Step 2: Generating embeddings and indexing[/bold cyan]")
     try:
-        index_documents(documents)
+        index_documents(documents, collection_name=collection)
     except Exception as e:
         console.print(f"\n[red]Error indexing documents: {e}[/red]")
         import traceback
@@ -129,7 +137,7 @@ def build(
     # Step 3: Show final statistics
     console.print("\n[bold cyan]Step 3: Index Statistics[/bold cyan]")
     try:
-        stats = get_collection_stats()
+        stats = get_collection_stats(collection)
         _display_stats(stats)
     except Exception as e:
         console.print(f"[yellow]Warning: Could not fetch stats: {e}[/yellow]")
@@ -158,34 +166,84 @@ def _display_stats(stats: dict) -> None:
 
 
 @app.command()
-def clear() -> None:
-    """Clear the entire index (delete all documents).
+def clear(
+    collection: str = typer.Option(
+        "course_materials",
+        "--collection",
+        "-c",
+        help="Collection to clear"
+    ),
+    yes: bool = typer.Option(
+        False,
+        "--yes",
+        "-y",
+        help="Skip confirmation prompt"
+    ),
+) -> None:
+    """Clear a collection (delete all documents).
 
     Warning: This operation is irreversible!
     """
     # Confirm with user
-    console.print("[yellow]Warning: This will delete all indexed documents![/yellow]")
-    confirm = typer.confirm("Are you sure you want to continue?")
+    if not yes:
+        console.print(f"[yellow]Warning: This will delete all documents in collection '{collection}'![/yellow]")
+        confirm = typer.confirm("Are you sure you want to continue?")
 
-    if not confirm:
-        console.print("[cyan]Operation cancelled.[/cyan]")
-        return
+        if not confirm:
+            console.print("[cyan]Operation cancelled.[/cyan]")
+            return
 
     try:
-        clear_index()
-        console.print("[green]✓ Index cleared successfully[/green]")
+        clear_index(collection)
+        console.print(f"[green]✓ Collection '{collection}' cleared successfully[/green]")
     except Exception as e:
-        console.print(f"[red]Error clearing index: {e}[/red]")
+        console.print(f"[red]Error clearing collection: {e}[/red]")
         sys.exit(1)
 
 
 @app.command()
-def stats() -> None:
-    """Show current index statistics."""
+def stats(
+    collection: str = typer.Option(
+        None,
+        "--collection",
+        "-c",
+        help="Show stats for specific collection (or all if not specified)"
+    ),
+) -> None:
+    """Show current index statistics.
+
+    If no collection is specified, shows stats for all collections.
+    """
     try:
-        stats = get_collection_stats()
         console.print("\n")
-        _display_stats(stats)
+
+        if collection:
+            # Show stats for specific collection
+            collection_stats = get_collection_stats(collection)
+            _display_stats(collection_stats)
+        else:
+            # Show stats for all collections
+            all_stats = get_all_stats()
+
+            if not all_stats:
+                console.print("[yellow]No collections found.[/yellow]")
+            else:
+                table = Table(
+                    title="All Collections",
+                    show_header=True,
+                    header_style="bold cyan"
+                )
+                table.add_column("Collection", style="cyan")
+                table.add_column("Documents", style="green", justify="right")
+
+                for name, stat in all_stats.items():
+                    if "error" in stat:
+                        table.add_row(name, f"[red]ERROR[/red]")
+                    else:
+                        table.add_row(name, str(stat.get("count", 0)))
+
+                console.print(table)
+
         console.print("\n")
     except Exception as e:
         console.print(f"[red]Error getting stats: {e}[/red]")

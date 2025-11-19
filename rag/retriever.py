@@ -19,11 +19,9 @@ from rag.config import CHROMA_DB_DIR, TOP_K
 from rag.embeddings import embed_texts, embed_query
 
 
-# Global ChromaDB client and collection (lazy initialization)
+# Global ChromaDB client (lazy initialization)
+# Note: We no longer cache collections globally to support multiple collections
 _chroma_client = None
-_collection = None
-
-COLLECTION_NAME = "course_materials"
 
 
 def _get_chroma_client() -> chromadb.Client:
@@ -48,28 +46,32 @@ def _get_chroma_client() -> chromadb.Client:
     return _chroma_client
 
 
-def _get_collection() -> chromadb.Collection:
-    """Get or create the ChromaDB collection.
+def _get_collection(collection_name: str = "course_materials") -> chromadb.Collection:
+    """Get or create a ChromaDB collection.
+
+    Args:
+        collection_name: Name of the collection (default: "course_materials")
 
     Returns:
-        chromadb.Collection: The course materials collection
+        chromadb.Collection: The requested collection
     """
-    global _collection
-    if _collection is None:
-        client = _get_chroma_client()
+    client = _get_chroma_client()
 
-        # Get or create collection
-        # Note: ChromaDB handles embedding function separately
-        # We'll provide embeddings directly when adding documents
-        _collection = client.get_or_create_collection(
-            name=COLLECTION_NAME,
-            metadata={"description": "RAG chatbot course materials"}
-        )
-    return _collection
+    # Get or create collection
+    # Note: ChromaDB handles embedding function separately
+    # We'll provide embeddings directly when adding documents
+    collection = client.get_or_create_collection(
+        name=collection_name,
+        metadata={"description": f"Collection: {collection_name}"}
+    )
+    return collection
 
 
-def get_collection_stats() -> Dict[str, Any]:
+def get_collection_stats(collection_name: str = "course_materials") -> Dict[str, Any]:
     """Get statistics about the indexed documents.
+
+    Args:
+        collection_name: Name of the collection (default: "course_materials")
 
     Returns:
         Dictionary with collection statistics including:
@@ -81,37 +83,35 @@ def get_collection_stats() -> Dict[str, Any]:
         >>> stats = get_collection_stats()
         >>> print(f"Indexed {stats['count']} documents")
     """
-    collection = _get_collection()
+    collection = _get_collection(collection_name)
     count = collection.count()
 
     return {
         "count": count,
-        "collection_name": COLLECTION_NAME,
+        "collection_name": collection_name,
         "storage_path": str(CHROMA_DB_DIR.absolute()),
     }
 
 
-def clear_index() -> None:
-    """Delete all documents from the collection (for rebuilding index).
+def clear_index(collection_name: str = "course_materials") -> None:
+    """Delete all documents from a collection (for rebuilding index).
+
+    Args:
+        collection_name: Name of the collection to clear (default: "course_materials")
 
     Warning:
         This operation is irreversible. All indexed documents will be removed.
     """
-    global _collection, _chroma_client
-
     client = _get_chroma_client()
 
     try:
         # Delete the collection
-        client.delete_collection(name=COLLECTION_NAME)
-        print(f"✓ Deleted collection '{COLLECTION_NAME}'")
-
-        # Reset the collection reference
-        _collection = None
+        client.delete_collection(name=collection_name)
+        print(f"✓ Deleted collection '{collection_name}'")
 
         # Recreate empty collection
-        _get_collection()
-        print(f"✓ Created new empty collection '{COLLECTION_NAME}'")
+        _get_collection(collection_name)
+        print(f"✓ Created new empty collection '{collection_name}'")
 
     except Exception as e:
         warnings.warn(f"Error clearing index: {e}")
@@ -119,6 +119,7 @@ def clear_index() -> None:
 
 def index_documents(
     documents: List[Document],
+    collection_name: str = "course_materials",
     batch_size: int = 100,
     show_progress: bool = True,
 ) -> None:
@@ -132,6 +133,7 @@ def index_documents(
 
     Args:
         documents: List of Document objects to index
+        collection_name: Name of the collection to index into (default: "course_materials")
         batch_size: Number of documents to process per batch (default: 100)
         show_progress: Whether to show progress bar (default: True)
 
@@ -140,7 +142,7 @@ def index_documents(
         Exception: If indexing fails
 
     Example:
-        >>> from src.data_loader import load_and_chunk_documents
+        >>> from rag.loaders import load_and_chunk_documents
         >>> docs = load_and_chunk_documents()
         >>> index_documents(docs)
         Processing 150 chunks...
@@ -150,7 +152,7 @@ def index_documents(
     if not documents:
         raise ValueError("Cannot index empty document list")
 
-    collection = _get_collection()
+    collection = _get_collection(collection_name)
 
     # Get existing document IDs to avoid duplicates
     existing_ids = set()
@@ -238,6 +240,7 @@ def index_documents(
 
 def retrieve_relevant_chunks(
     query: str,
+    collection_name: str = "course_materials",
     top_k: Optional[int] = None,
     min_score: Optional[float] = None,
 ) -> List[Document]:
@@ -248,6 +251,7 @@ def retrieve_relevant_chunks(
 
     Args:
         query: User's question or search query
+        collection_name: Name of the collection to search (default: "course_materials")
         top_k: Number of results to return (default: from config)
         min_score: Minimum similarity score threshold (optional)
 
@@ -271,13 +275,13 @@ def retrieve_relevant_chunks(
     if top_k is None:
         top_k = TOP_K
 
-    collection = _get_collection()
+    collection = _get_collection(collection_name)
 
     # Check if collection is empty
     if collection.count() == 0:
         raise ValueError(
-            "Index is empty. Please run index building first:\n"
-            "  python -m src.build_index"
+            f"Collection '{collection_name}' is empty. Please run index building first:\n"
+            "  python -m scripts.build_index build"
         )
 
     try:

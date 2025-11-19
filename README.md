@@ -6,7 +6,8 @@ A Python 3.12-based autonomous agent system built on top of Retrieval-Augmented 
 
 - **Document Processing**: Load and process PDF documents and MP4 video transcripts
 - **Vector Embeddings**: Generate and store embeddings using OpenAI for efficient retrieval
-- **ChromaDB Integration**: Persistent vector database for semantic search
+- **ChromaDB Integration**: Persistent vector database for semantic search with multi-collection support
+- **Multi-Collection RAG**: Organize documents into separate collections by type or domain
 - **RAG Pipeline**: Retrieve relevant context and generate responses using OpenAI GPT
 - **Audio Transcription**: OpenAI Whisper API integration for MP4 audio transcription
 - **Smart Caching**: Transcript caching with modification tracking and partial transcript resume capability
@@ -52,7 +53,8 @@ ai-academy-agent-capstone-project/
 │   ├── config.py          # Configuration management
 │   ├── loaders.py         # Document loading
 │   ├── embeddings.py      # Vector embeddings
-│   ├── retriever.py       # Document retrieval
+│   ├── retriever.py       # Document retrieval (multi-collection)
+│   ├── collections.py     # Collection management utilities
 │   └── prompts.py         # Prompt templates
 ├── evaluation/            # Metrics and testing
 │   ├── metrics.py         # Scoring functions
@@ -177,14 +179,20 @@ See `.env.example` for a complete configuration template with detailed comments.
 After adding your PDF and MP4 files to the `data/` directory:
 
 ```bash
-# Build or update the index (incremental)
+# Build or update the index (incremental, default collection)
 python -m scripts.build_index build
+
+# Build a specific collection
+python -m scripts.build_index build --collection transcripts
 
 # Rebuild from scratch (if you changed chunking parameters)
 python -m scripts.build_index build --rebuild
 
-# Check index statistics
+# Check all collection statistics
 python -m scripts.build_index stats
+
+# Check specific collection stats
+python -m scripts.build_index stats --collection course_materials
 ```
 
 **Output example:**
@@ -234,6 +242,9 @@ python -m rag.loaders
 
 # Test retrieval from index
 python -m rag.retriever
+
+# Test collection utilities
+python -m rag.collections
 ```
 
 ### Advanced Usage
@@ -289,10 +300,12 @@ python -m scripts.legacy_chatbot query "question" --log-file custom_queries.log
 
 | Command | Purpose |
 |---------|---------|
-| `python -m scripts.build_index build` | Build or update the search index |
-| `python -m scripts.build_index stats` | Show index statistics |
+| `python -m scripts.build_index build` | Build or update the search index (default collection) |
+| `python -m scripts.build_index build --collection NAME` | Build or update a specific collection |
+| `python -m scripts.build_index stats` | Show all collection statistics |
+| `python -m scripts.build_index stats --collection NAME` | Show specific collection statistics |
 | `python -m scripts.build_index build --rebuild` | Rebuild index from scratch |
-| `python -m scripts.build_index clear` | Delete all indexed documents |
+| `python -m scripts.build_index clear --collection NAME --yes` | Delete all documents from a collection |
 
 ### Chatbot Queries
 

@@ -23,8 +23,8 @@ cp .env.example .env
 # 2. Activate virtual environment
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 
-# 3. Add your documents to data/hw4_docs/ directory
-# (PDFs and MP4 files)
+# 3. Add your documents to data/ directory
+# (Just drop PDF and MP4 files directly in data/)
 
 # 4. Build the search index
 python -m scripts.build_index build
@@ -61,10 +61,10 @@ ai-academy-agent-capstone-project/
 │   ├── build_index.py     # Index building
 │   ├── demo.py            # Agent demo
 │   └── legacy_chatbot.py  # RAG chatbot
-├── data/                  # Training data
-│   ├── hw4_docs/          # Document storage
-│   ├── ai_academy/        # Additional materials
-│   └── transcripts/       # Cached MP4 transcripts
+├── data/                  # Source documents
+│   ├── *.pdf              # PDF files (place here)
+│   ├── *.mp4              # MP4 video files (place here)
+│   └── transcripts/       # Auto-generated MP4 transcripts (cached)
 ├── docs/                  # Architecture documentation
 ├── logs/                  # Agent execution logs
 ├── embeddings/            # ChromaDB storage
@@ -174,7 +174,7 @@ See `.env.example` for a complete configuration template with detailed comments.
 
 ### Building the Index
 
-After adding your PDF and MP4 files to the `data/hw4_docs/` directory:
+After adding your PDF and MP4 files to the `data/` directory:
 
 ```bash
 # Build or update the index (incremental)

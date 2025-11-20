@@ -12,7 +12,11 @@ A Python 3.12-based autonomous agent system built on top of Retrieval-Augmented 
 - **Audio Transcription**: OpenAI Whisper API integration for MP4 audio transcription
 - **Smart Caching**: Transcript caching with modification tracking and partial transcript resume capability
 - **Query Logging**: Automatic logging of all queries and responses to `queries.log` with timestamps
-- **CLI Interface**: Rich terminal interface with progress bars and formatted output using typer and rich
+- **Autonomous Agent System**: Complete agentic workflow with reasoning, reflection, and tool-calling
+- **Self-Reflection Loop**: Iterative answer refinement with confidence scoring
+- **Tool-Calling System**: 6 integrated tools (calculator, date, search, stats, formatting)
+- **Interactive Demo CLI**: Rich terminal interface with progress bars and formatted output using typer and rich
+- **Evaluation Framework**: LLM-as-judge metrics for answer quality and agent performance
 
 ## Quick Start
 
@@ -42,7 +46,7 @@ python -m scripts.build_index stats
 ai-academy-agent-capstone-project/
 ├── agent/                  # Core agent logic
 │   ├── orchestrator.py    # Main agent coordinator
-│   ├── reasoning.py       # Planning and decomposition
+│   ├── reasoning.py       # Query reasoning
 │   ├── reflection.py      # Self-critique
 │   └── memory.py          # State tracking
 ├── tools/                  # Tool-calling system
@@ -231,6 +235,43 @@ The chatbot will:
 4. Show relevance scores for retrieved chunks
 5. Log the full query and response to `queries.log`
 
+### Using the Agent Demo CLI
+
+The agent system includes an interactive demo CLI that showcases all capabilities:
+
+```bash
+# Ask the agent a question
+python -m scripts.demo ask "What is RAG?"
+
+# With verbose mode (shows reasoning steps)
+python -m scripts.demo ask "Calculate 15% of 250" --verbose
+
+# Save execution trace
+python -m scripts.demo ask "Complex query" --save-trace
+
+# Interactive REPL mode
+python -m scripts.demo interactive
+
+# Run pre-configured example demos
+python -m scripts.demo examples
+
+# Show detailed workflow visualization
+python -m scripts.demo workflow "How does RAG work?"
+
+# View system statistics
+python -m scripts.demo stats
+```
+
+The agent demo features:
+- Rich terminal output with colors and formatting
+- Progress indicators during execution
+- Self-reflection and iterative refinement
+- Tool-calling capabilities (calculator, date, search, formatting)
+- Confidence scoring for answers
+- Complete execution traces
+
+📘 **For complete demo CLI guide, see [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md)**
+
 ### Testing Individual Components
 
 ```bash
@@ -316,6 +357,18 @@ python -m scripts.legacy_chatbot query "question" --log-file custom_queries.log
 | `python -m scripts.legacy_chatbot query "question" --top-k 10` | Retrieve more context chunks |
 | `python -m scripts.legacy_chatbot query "question" --log-file path` | Use custom log file |
 | `python -m scripts.legacy_chatbot build-index` | Build index via chatbot CLI |
+
+### Agent Demo CLI
+
+| Command | Purpose |
+|---------|---------|
+| `python -m scripts.demo ask "question"` | Ask the agent a question |
+| `python -m scripts.demo ask "question" --verbose` | Show detailed reasoning steps |
+| `python -m scripts.demo ask "question" --save-trace` | Save execution trace |
+| `python -m scripts.demo interactive` | Start interactive REPL mode |
+| `python -m scripts.demo examples` | Run pre-configured demo queries |
+| `python -m scripts.demo workflow "question"` | Show detailed workflow visualization |
+| `python -m scripts.demo stats` | Display system statistics |
 
 ## Contributing
 

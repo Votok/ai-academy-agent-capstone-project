@@ -44,8 +44,8 @@ class ReasoningAgent:
             max_iterations=MAX_REASONING_STEPS
         )
 
-        # Phase 1: Planning
-        print("🧠 Phase 1: Planning")
+        # Planning
+        print("🧠 Planning")
         plan = self.planner.plan(query)
         state.add_step("plan", f"Main goal: {plan.main_goal}", {
             "sub_tasks": plan.sub_tasks,
@@ -60,19 +60,19 @@ class ReasoningAgent:
         while state.should_continue():
             print(f"\n🔄 Iteration {state.iteration + 1}/{state.max_iterations}")
 
-            # Phase 2: Execution (Retrieve + Generate)
-            print("   🔍 Phase 2: Retrieval")
+            # Execution (Retrieve + Generate)
+            print("   🔍 Retrieval")
             context_docs = self._retrieve_context(query, collections)
             context_texts = [doc.page_content for doc in context_docs]
 
-            print("   ✍️  Phase 2: Generation")
+            print("   ✍️  Generation")
             answer = self._generate_answer(query, context_texts, state)
             state.current_answer = answer
             state.add_step("execute", answer, {"context_count": len(context_docs)})
 
-            # Phase 3: Reflection
+            # Reflection
             if REFLECTION_ENABLED:
-                print("   🤔 Phase 3: Reflection")
+                print("   🤔 Reflection")
                 reflection = self.critic.reflect(query, answer, context_texts[:3])
                 state.confidence_score = reflection.confidence_score
 
@@ -88,9 +88,9 @@ class ReasoningAgent:
                 print(f"      Confidence: {reflection.confidence_score:.2f}")
                 print(f"      Satisfactory: {reflection.is_satisfactory}")
 
-                # Phase 4: Decide whether to revise
+                # Decide whether to revise
                 if self.critic.should_revise(reflection) and state.should_continue():
-                    print("   🔄 Phase 4: Revision needed")
+                    print("   🔄 Revision needed")
                     state.increment_iteration()
 
                     # Generate revision prompt with feedback

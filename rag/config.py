@@ -100,7 +100,7 @@ Higher values provide more context but increase token usage.
 """
 
 # ============================================================================
-# Agent Configuration (NEW - Phase 1)
+# Agent Configuration
 # ============================================================================
 
 AGENT_MODEL: str = _get_env_var("AGENT_MODEL", default="gpt-4-turbo-preview")
@@ -115,7 +115,7 @@ Higher values make output more creative, lower values more deterministic.
 """
 
 # ============================================================================
-# Reasoning Loop Configuration (NEW - Phase 1)
+# Reasoning Loop Configuration
 # ============================================================================
 
 MAX_REASONING_STEPS: int = int(_get_env_var("MAX_REASONING_STEPS", default="5"))
@@ -134,7 +134,7 @@ Higher values make agent more cautious.
 """
 
 # ============================================================================
-# Tool Calling Configuration (NEW - Phase 1)
+# Tool Calling Configuration
 # ============================================================================
 
 TOOL_TIMEOUT_SECONDS: int = int(_get_env_var("TOOL_TIMEOUT_SECONDS", default="30"))
@@ -148,7 +148,7 @@ Should be False for production/untrusted environments.
 """
 
 # ============================================================================
-# Logging Configuration (NEW - Phase 1)
+# Logging Configuration
 # ============================================================================
 
 LOG_LEVEL: str = _get_env_var("LOG_LEVEL", default="INFO").upper()
@@ -165,7 +165,7 @@ Useful for debugging and evaluation but increases log size.
 """
 
 # ============================================================================
-# Evaluation Configuration (NEW - Phase 1)
+# Evaluation Configuration
 # ============================================================================
 
 EVAL_MODEL: str = _get_env_var("EVAL_MODEL", default="gpt-4-turbo-preview")

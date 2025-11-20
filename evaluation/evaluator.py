@@ -7,8 +7,6 @@ This module orchestrates agent evaluation:
 - Generate detailed per-query reports
 - Create aggregate summary statistics
 - Save results to evaluation/reports/
-
-Implementation: Phase 7
 """
 
 import json

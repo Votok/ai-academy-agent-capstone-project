@@ -5,8 +5,6 @@ This module defines metrics for agent performance evaluation:
 - Tool call success rate and usage patterns
 - Reasoning efficiency (iterations, confidence)
 - Topic coverage analysis
-
-Implementation: Phase 7
 """
 
 from typing import List, Dict, Any, Optional

@@ -7,8 +7,6 @@ the agent's capabilities:
 - Verbose debugging mode
 - Rich terminal output
 
-Implementation: Phase 8
-
 Usage:
     python -m scripts.demo ask "Your question here"
     python -m scripts.demo ask "Calculate 15% of 250" --verbose

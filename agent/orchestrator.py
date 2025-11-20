@@ -68,9 +68,9 @@ class AgentOrchestrator:
             print(f"Query: {query}")
             print(f"{'='*60}\n")
 
-        # === Phase 1: PLANNING ===
+        # === PLANNING ===
         if verbose:
-            print("🧠 Phase 1: Planning")
+            print("🧠 Planning")
 
         plan = self._plan(query, state, verbose)
 
@@ -90,22 +90,22 @@ class AgentOrchestrator:
             if verbose:
                 print(f"\n🔄 Iteration {iteration_num}/{state.max_iterations}")
 
-            # === Phase 2: RETRIEVAL ===
+            # === RETRIEVAL ===
             if verbose:
-                print("   🔍 Phase 2: Retrieval")
+                print("   🔍 Retrieval")
 
             context_docs = self._retrieve(query, collections, state, verbose)
 
-            # === Phase 3: TOOL CALLING ===
+            # === TOOL CALLING ===
             tool_results = []
             if needs_tools:
                 if verbose:
-                    print("   🔧 Phase 3: Tool Calling")
+                    print("   🔧 Tool Calling")
                 tool_results = self._call_tools(query, context_docs, state, verbose)
 
-            # === Phase 4: GENERATION ===
+            # === GENERATION ===
             if verbose:
-                print("   ✍️  Phase 4: Generation")
+                print("   ✍️  Generation")
 
             answer = self._generate(
                 query, context_docs, tool_results, state, verbose
@@ -113,19 +113,19 @@ class AgentOrchestrator:
 
             state.current_answer = answer
 
-            # === Phase 5: REFLECTION ===
+            # === REFLECTION ===
             if REFLECTION_ENABLED:
                 if verbose:
-                    print("   🤔 Phase 5: Reflection")
+                    print("   🤔 Reflection")
 
                 reflection = self._reflect(query, answer, context_docs, state, verbose)
 
-                # === Phase 6: REVISE? ===
+                # === REVISE? ===
                 should_revise = self.critic.should_revise(reflection)
 
                 if should_revise and state.should_continue():
                     if verbose:
-                        print("   🔄 Phase 6: Revision needed, continuing...")
+                        print("   🔄 Revision needed, continuing...")
 
                     # Prepare feedback for next iteration
                     feedback = self._format_reflection_feedback(reflection)
@@ -143,7 +143,7 @@ class AgentOrchestrator:
                 state.is_complete = True
                 break
 
-        # === Phase 7: FINALIZATION ===
+        # === FINALIZATION ===
         if verbose:
             print(f"\n{'='*60}")
             print(f"🎯 Workflow Complete")

@@ -7,8 +7,6 @@ This module runs agent evaluation on test datasets:
 - Generate evaluation reports with summary statistics
 - Save results to evaluation/reports/
 
-Implementation: Phase 7
-
 Usage:
     python -m scripts.evaluate
     python -m scripts.evaluate --verbose

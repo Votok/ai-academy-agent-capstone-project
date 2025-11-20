@@ -203,12 +203,12 @@ Confidence: 0.85 | Iterations: 1 | Steps: 5
 ### Verbose Output
 
 When using `--verbose`, you'll see:
-- **Phase 1: Planning** - Query decomposition
-- **Phase 2: Retrieval** - Document search results
-- **Phase 3: Tool Calling** - Tool selection and execution (if needed)
-- **Phase 4: Generation** - Answer generation
-- **Phase 5: Reflection** - Self-critique
-- **Phase 6: Revision** - Revision decision (if needed)
+- **Planning** - Query decomposition
+- **Retrieval** - Document search results
+- **Tool Calling** - Tool selection and execution (if needed)
+- **Generation** - Answer generation
+- **Reflection** - Self-critique
+- **Revision** - Revision decision (if needed)
 
 ### Workflow Summary Table
 

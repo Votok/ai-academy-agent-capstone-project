@@ -1,21 +1,60 @@
 {
   "test_queries": [
     {
-      "id": 1,
-      "query": "What is RAG architecture?",
-      "expected_topics": ["retrieval", "augmented", "generation", "context"],
+      "id": "q001",
+      "query": "What is retrieval-augmented generation?",
+      "category": "factual",
+      "expected_topics": ["RAG", "retrieval", "generation", "LLM", "context"],
+      "requires_tools": false,
       "difficulty": "easy"
     },
     {
-      "id": 2,
-      "query": "Explain the difference between vector databases and traditional databases",
-      "expected_topics": ["embeddings", "similarity search", "SQL", "NoSQL"],
+      "id": "q002",
+      "query": "What did I learn about embeddings in the AI Academy course?",
+      "category": "contextual",
+      "expected_topics": ["embeddings", "vectors", "similarity"],
+      "requires_tools": false,
       "difficulty": "medium"
+    },
+    {
+      "id": "q003",
+      "query": "How does a RAG system differ from standard prompting? List 3 key differences.",
+      "category": "comparative",
+      "expected_topics": ["RAG", "prompting", "retrieval", "context", "knowledge"],
+      "requires_tools": false,
+      "difficulty": "medium"
+    },
+    {
+      "id": "q004",
+      "query": "Calculate 15% of 250 and explain why this might be relevant to RAG chunking strategies.",
+      "category": "tool_and_reasoning",
+      "expected_topics": ["calculation", "chunking", "overlap", "percentage"],
+      "requires_tools": true,
+      "difficulty": "hard"
+    },
+    {
+      "id": "q005",
+      "query": "What are the main components of an autonomous agent?",
+      "category": "factual",
+      "expected_topics": ["agent", "reasoning", "tools", "reflection", "memory"],
+      "requires_tools": false,
+      "difficulty": "medium"
+    },
+    {
+      "id": "q006",
+      "query": "Search the knowledge base for information about vector databases and format the results as a bullet list.",
+      "category": "tool_and_reasoning",
+      "expected_topics": ["vector database", "ChromaDB", "embeddings", "search"],
+      "requires_tools": true,
+      "difficulty": "hard"
     }
   ],
   "metadata": {
     "created": "2025-11-19",
-    "version": "1.0",
-    "description": "Test queries for agent evaluation (Phase 7)"
+    "updated": "2025-11-20",
+    "version": "2.0",
+    "description": "Test queries for agent evaluation (Phase 7)",
+    "categories": ["factual", "contextual", "comparative", "tool_and_reasoning"],
+    "total_queries": 6
   }
 }

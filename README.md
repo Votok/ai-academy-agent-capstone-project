@@ -80,9 +80,7 @@ Generate a LinkedIn post about completing the Ciklum AI Academy program:
 ````bash
 # Generate post (displays in terminal)
 python -m scripts.demo social
-```
 
-The generated post includes your Ciklum AI Academy Engineering Learning Path completion, capstone project achievements (RAG, reasoning loops, tool-calling), and a link to Ciklum's website.
 
 ## Demo Workflow
 

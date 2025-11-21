@@ -95,3 +95,37 @@ def format_revision_prompt(
         feedback=feedback,
         context=context_str
     )
+
+
+# LinkedIn Post Template
+
+LINKEDIN_POST_TEMPLATE = """Excited to share that I've completed the Ciklum AI Academy - Engineering Learning Path! 🎓
+
+This intensive program was specifically designed for developers and architects wanting to dive deep into the technical foundations of AI systems. Through mentor-led sessions and challenging practical assignments, I built a complete autonomous agentic AI system from the ground up.
+
+What I built:
+• RAG architecture with vector search and embeddings
+• Self-reflection loops that critique and improve outputs
+• Intelligent tool-calling for autonomous actions
+• Multi-step reasoning and planning capabilities
+
+The hands-on experience taught me to tackle complex real-world AI challenges, automate sophisticated tasks, and work with cutting-edge methods. I'm energized by the technical depth I've gained and ready to bring these skills to production systems.
+
+The AI landscape is evolving rapidly, and I'm equipped with both the technical skills and adaptability to stay ahead of the curve. Looking forward to what's next! {custom_closing}
+
+Learn more about Ciklum's AI initiatives: https://www.ciklum.com/
+
+#Ciklum #AIAcademy #MachineLearning #ArtificialIntelligence #EngineeringPath"""
+
+
+def format_linkedin_post(custom_closing: str = "") -> str:
+    """
+    Format LinkedIn post about Ciklum AI Academy completion
+
+    Args:
+        custom_closing: Optional custom closing statement
+
+    Returns:
+        Formatted LinkedIn post text
+    """
+    return LINKEDIN_POST_TEMPLATE.format(custom_closing=custom_closing)

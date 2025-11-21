@@ -6,6 +6,7 @@ the agent's capabilities:
 - Step-by-step workflow visualization
 - Verbose debugging mode
 - Rich terminal output
+- LinkedIn post generation (safe, manual posting only)
 
 Usage:
     python -m scripts.demo ask "Your question here"
@@ -14,6 +15,8 @@ Usage:
     python -m scripts.demo interactive
     python -m scripts.demo examples
     python -m scripts.demo stats
+    python -m scripts.demo social
+    python -m scripts.demo social --save post.txt
 """
 
 import typer
@@ -26,6 +29,7 @@ from typing import Optional
 import time
 
 from agent.orchestrator import AgentOrchestrator
+from agent.social_post import SocialPostGenerator
 
 app = typer.Typer(help="🤖 AI Academy Agent Demo")
 console = Console()
@@ -401,6 +405,63 @@ def stats():
         tools_table.add_row(tool_name, tool.category.value if hasattr(tool, 'category') else "N/A")
 
     console.print(tools_table)
+
+
+@app.command()
+def social(
+    save: Optional[str] = typer.Option(None, "--save", "-s", help="Save to file (e.g., post.txt)"),
+    closing: str = typer.Option("", "--closing", "-c", help="Custom closing statement"),
+):
+    """
+    Generate LinkedIn post about Ciklum AI Academy completion
+
+    SAFETY: This command ONLY generates text. It does NOT post to LinkedIn.
+    You must manually copy and paste the content to LinkedIn.
+
+    Examples:
+        python -m scripts.demo social
+        python -m scripts.demo social --save my_post.txt
+        python -m scripts.demo social --closing "Let's connect!"
+    """
+    console.print(Panel.fit(
+        f"[bold cyan]📝 LinkedIn Post Generator[/bold cyan]\n"
+        f"[yellow]⚠️  GENERATION ONLY - No automatic posting[/yellow]",
+        border_style="cyan"
+    ))
+
+    generator = SocialPostGenerator()
+
+    # Generate post
+    console.print("\n[bold]Generating LinkedIn post...[/bold]\n")
+    post_text = generator.generate_post(custom_closing=closing)
+
+    console.print("="*70)
+    console.print(f"[bold cyan]YOUR LINKEDIN POST:[/bold cyan]")
+    console.print("="*70)
+    console.print()
+    console.print(post_text)
+    console.print()
+
+    # Save to file if requested
+    if save:
+        try:
+            generator.save_post(post_text, save)
+            console.print(f"[green]✓ Saved to: {save}[/green]")
+        except Exception as e:
+            console.print(f"[red]Error saving file: {e}[/red]")
+
+    # Display safety reminder
+    console.print("\n" + "="*70)
+    console.print("[bold yellow]📋 NEXT STEPS (Manual Action Required):[/bold yellow]")
+    console.print("="*70)
+    console.print("1. Select the text above with your mouse")
+    console.print("2. Copy it (Cmd+C / Ctrl+C)")
+    console.print("3. Go to LinkedIn manually")
+    console.print("4. Paste and post when ready")
+    console.print()
+    console.print("[dim]This tool does NOT automatically post to LinkedIn.[/dim]")
+    console.print("[dim]No clipboard copying. No API integration. Generation only.[/dim]")
+    console.print("="*70)
 
 
 if __name__ == "__main__":

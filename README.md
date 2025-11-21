@@ -73,6 +73,17 @@ python -m scripts.build_index stats
 python -m scripts.demo workflow "How does RAG work?"
 ```
 
+### LinkedIn Post Generator
+
+Generate a LinkedIn post about completing the Ciklum AI Academy program:
+
+````bash
+# Generate post (displays in terminal)
+python -m scripts.demo social
+```
+
+The generated post includes your Ciklum AI Academy Engineering Learning Path completion, capstone project achievements (RAG, reasoning loops, tool-calling), and a link to Ciklum's website.
+
 ## Demo Workflow
 
 The agent uses a 7-phase pipeline for processing queries:
@@ -91,7 +102,7 @@ The `workflow` command shows the complete agent pipeline:
 
 ```bash
 python -m scripts.demo workflow "Compare RAG vs standard prompting"
-```
+````
 
 **Output includes:**
 

@@ -46,11 +46,11 @@ def _get_chroma_client() -> chromadb.Client:
     return _chroma_client
 
 
-def _get_collection(collection_name: str = "course_materials") -> chromadb.Collection:
+def _get_collection(collection_name: str = "ai_academy_course") -> chromadb.Collection:
     """Get or create a ChromaDB collection.
 
     Args:
-        collection_name: Name of the collection (default: "course_materials")
+        collection_name: Name of the collection (default: "ai_academy_course")
 
     Returns:
         chromadb.Collection: The requested collection
@@ -67,11 +67,11 @@ def _get_collection(collection_name: str = "course_materials") -> chromadb.Colle
     return collection
 
 
-def get_collection_stats(collection_name: str = "course_materials") -> Dict[str, Any]:
+def get_collection_stats(collection_name: str = "ai_academy_course") -> Dict[str, Any]:
     """Get statistics about the indexed documents.
 
     Args:
-        collection_name: Name of the collection (default: "course_materials")
+        collection_name: Name of the collection (default: "ai_academy_course")
 
     Returns:
         Dictionary with collection statistics including:
@@ -93,11 +93,11 @@ def get_collection_stats(collection_name: str = "course_materials") -> Dict[str,
     }
 
 
-def clear_index(collection_name: str = "course_materials") -> None:
+def clear_index(collection_name: str = "ai_academy_course") -> None:
     """Delete all documents from a collection (for rebuilding index).
 
     Args:
-        collection_name: Name of the collection to clear (default: "course_materials")
+        collection_name: Name of the collection to clear (default: "ai_academy_course")
 
     Warning:
         This operation is irreversible. All indexed documents will be removed.
@@ -119,7 +119,7 @@ def clear_index(collection_name: str = "course_materials") -> None:
 
 def index_documents(
     documents: List[Document],
-    collection_name: str = "course_materials",
+    collection_name: str = "ai_academy_course",
     batch_size: int = 100,
     show_progress: bool = True,
 ) -> None:
@@ -133,7 +133,7 @@ def index_documents(
 
     Args:
         documents: List of Document objects to index
-        collection_name: Name of the collection to index into (default: "course_materials")
+        collection_name: Name of the collection to index into (default: "ai_academy_course")
         batch_size: Number of documents to process per batch (default: 100)
         show_progress: Whether to show progress bar (default: True)
 
@@ -240,7 +240,7 @@ def index_documents(
 
 def retrieve_relevant_chunks(
     query: str,
-    collection_name: str = "course_materials",
+    collection_name: str = "ai_academy_course",
     top_k: Optional[int] = None,
     min_score: Optional[float] = None,
 ) -> List[Document]:
@@ -251,7 +251,7 @@ def retrieve_relevant_chunks(
 
     Args:
         query: User's question or search query
-        collection_name: Name of the collection to search (default: "course_materials")
+        collection_name: Name of the collection to search (default: "ai_academy_course")
         top_k: Number of results to return (default: from config)
         min_score: Minimum similarity score threshold (optional)
 

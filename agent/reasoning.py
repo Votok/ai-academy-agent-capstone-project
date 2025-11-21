@@ -92,7 +92,7 @@ Be specific and actionable."""
         if any(word in query_lower for word in [
             "academy", "course", "lesson", "week", "homework", "lecture", "material"
         ]):
-            collections.append("course_materials")
+            collections.append("ai_academy_course")
 
         # Check for transcript indicators
         if any(word in query_lower for word in [
@@ -100,9 +100,9 @@ Be specific and actionable."""
         ]):
             collections.append("transcripts")
 
-        # Default to course_materials if unclear
+        # Default to ai_academy_course if unclear
         if not collections:
-            collections = ["course_materials"]
+            collections = ["ai_academy_course"]
 
         return collections
 

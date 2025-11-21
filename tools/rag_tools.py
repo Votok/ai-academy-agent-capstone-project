@@ -31,7 +31,7 @@ class SearchVectorDBTool(BaseTool):
                 type="string",
                 description="Which collection to search (or 'all' for all collections)",
                 required=False,
-                default="course_materials"
+                default="ai_academy_course"
             ),
             ToolParameter(
                 name="top_k",
@@ -42,7 +42,7 @@ class SearchVectorDBTool(BaseTool):
             )
         ]
 
-    def execute(self, query: str, collection: str = "course_materials", top_k: int = 5) -> ToolResult:
+    def execute(self, query: str, collection: str = "ai_academy_course", top_k: int = 5) -> ToolResult:
         """Execute vector search"""
         try:
             # Handle "all" collections case

@@ -196,7 +196,7 @@ python -m scripts.build_index build --rebuild
 python -m scripts.build_index stats
 
 # Check specific collection stats
-python -m scripts.build_index stats --collection course_materials
+python -m scripts.build_index stats --collection ai_academy_course
 ```
 
 **Output example:**

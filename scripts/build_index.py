@@ -44,7 +44,7 @@ def build(
         help="Show index statistics only (no building)"
     ),
     collection: str = typer.Option(
-        "course_materials",
+        "ai_academy_course",
         "--collection",
         "-c",
         help="Collection name to build/update"
@@ -168,7 +168,7 @@ def _display_stats(stats: dict) -> None:
 @app.command()
 def clear(
     collection: str = typer.Option(
-        "course_materials",
+        "ai_academy_course",
         "--collection",
         "-c",
         help="Collection to clear"

@@ -1,22 +1,15 @@
 # AI Academy Agentic System
 
-A Python 3.12-based autonomous agent system built on top of Retrieval-Augmented Generation (RAG). The system features a modular architecture with support for contextual data pipelines, reasoning loops with self-reflection, tool-calling capabilities, and evaluation frameworks.
+An autonomous AI agent built on Retrieval-Augmented Generation (RAG) with reasoning loops, self-reflection, and tool-calling capabilities.
 
 ## Features
 
-- **Document Processing**: Load and process PDF documents and MP4 video transcripts
-- **Vector Embeddings**: Generate and store embeddings using OpenAI for efficient retrieval
-- **ChromaDB Integration**: Persistent vector database for semantic search with multi-collection support
-- **Multi-Collection RAG**: Organize documents into separate collections by type or domain
-- **RAG Pipeline**: Retrieve relevant context and generate responses using OpenAI GPT
-- **Audio Transcription**: OpenAI Whisper API integration for MP4 audio transcription
-- **Smart Caching**: Transcript caching with modification tracking and partial transcript resume capability
-- **Query Logging**: Automatic logging of all queries and responses to `queries.log` with timestamps
-- **Autonomous Agent System**: Complete agentic workflow with reasoning, reflection, and tool-calling
-- **Self-Reflection Loop**: Iterative answer refinement with confidence scoring
-- **Tool-Calling System**: 6 integrated tools (calculator, date, search, stats, formatting)
-- **Interactive Demo CLI**: Rich terminal interface with progress bars and formatted output using typer and rich
-- **Evaluation Framework**: LLM-as-judge metrics for answer quality and agent performance
+- Multi-collection RAG with ChromaDB vector search
+- Autonomous reasoning with planning and self-reflection
+- Tool-calling system (calculator, date, search, formatting)
+- PDF and MP4 transcript processing with smart caching
+- Interactive demo CLI with workflow visualization
+- Evaluation framework with LLM-as-judge metrics
 
 ## Quick Start
 
@@ -28,352 +21,100 @@ cp .env.example .env
 # 2. Activate virtual environment
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 
-# 3. Add your documents to data/ directory
-# (Just drop PDF and MP4 files directly in data/)
+# 3. Install dependencies
+pip install -r requirements.txt
 
-# 4. Build the search index
+# 4. Add documents to data/ directory
+# Place PDF and MP4 files in data/
+
+# 5. Build the search index
 python -m scripts.build_index build
 
-# 5. Verify index was created
+# 6. Verify index
 python -m scripts.build_index stats
 ```
 
-📘 **For complete command reference, see [COMMANDS.md](COMMANDS.md)**
+**Prerequisites**: Python 3.12+, OpenAI API key, ffmpeg (for MP4 transcription: `brew install ffmpeg`)
 
 ## Project Structure
 
 ```
 ai-academy-agent-capstone-project/
-├── agent/                  # Core agent logic
-│   ├── orchestrator.py    # Main agent coordinator
-│   ├── reasoning.py       # Query reasoning
-│   ├── reflection.py      # Self-critique
-│   └── memory.py          # State tracking
-├── tools/                  # Tool-calling system
-│   ├── registry.py        # Tool registration
-│   ├── rag_tools.py       # Vector search tools
-│   └── utility_tools.py   # Calculator, date, etc.
-├── rag/                    # RAG modules
-│   ├── config.py          # Configuration management
-│   ├── loaders.py         # Document loading
-│   ├── embeddings.py      # Vector embeddings
-│   ├── retriever.py       # Document retrieval (multi-collection)
-│   ├── collections.py     # Collection management utilities
-│   └── prompts.py         # Prompt templates
-├── evaluation/            # Metrics and testing
-│   ├── metrics.py         # Scoring functions
-│   └── evaluator.py       # Evaluation runner
-├── scripts/               # CLI tools
-│   ├── build_index.py     # Index building
-│   ├── demo.py            # Agent demo
-│   └── legacy_chatbot.py  # RAG chatbot
-├── data/                  # Source documents
-│   ├── *.pdf              # PDF files (place here)
-│   ├── *.mp4              # MP4 video files (place here)
-│   └── transcripts/       # Auto-generated MP4 transcripts (cached)
-├── docs/                  # Architecture documentation
-├── logs/                  # Agent execution logs
-├── embeddings/            # ChromaDB storage
-├── .env.example           # Environment template
-├── COMMANDS.md            # Command reference
-├── requirements.txt       # Dependencies
-└── README.md              # This file
+├── agent/              # Agent logic (orchestrator, reasoning, reflection)
+├── tools/              # Tool system (6 registered tools)
+├── rag/                # RAG modules (loaders, retriever, embeddings)
+├── evaluation/         # Metrics and evaluation framework
+├── scripts/            # CLI tools (build_index, demo)
+├── data/               # Source documents (PDFs, MP4s)
+│   └── transcripts/    # Auto-generated MP4 transcripts
+├── embeddings/         # ChromaDB storage (gitignored)
+├── logs/               # Agent execution traces
+└── .env                # Environment config (never commit)
 ```
 
-## Prerequisites
+## Basic Commands
 
-- Python 3.12 or higher
-- OpenAI API key (get one from [OpenAI Platform](https://platform.openai.com/))
-- ffmpeg (for MP4 audio extraction)
-  - macOS: `brew install ffmpeg`
-  - Linux: `apt-get install ffmpeg` or `yum install ffmpeg`
-  - Windows: Download from [ffmpeg.org](https://ffmpeg.org/)
-
-## Setup Instructions
-
-### 1. Clone the Repository
+### Index Management
 
 ```bash
-git clone https://github.com/Votok/ai-academy-rag-chatbot.git
-cd ai-academy-rag-chatbot
-```
-
-### 2. Create a Virtual Environment
-
-Create and activate a virtual environment to isolate project dependencies:
-
-**On Linux/MacOS:**
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-**On Windows:**
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-Install all required packages from requirements.txt:
-
-```bash
-pip install -r requirements.txt
-```
-
-This will install:
-
-- `langchain` - Framework for building LLM applications
-- `openai` - OpenAI API client (includes Whisper API access)
-- `chromadb` - Vector database for embeddings
-- `pypdf` - PDF document processing
-- `tiktoken` - Token counting for OpenAI models
-- `python-dotenv` - Environment variable management
-- `typer` - CLI framework for command-line interface
-- `rich` - Rich terminal formatting and progress bars
-- `tqdm` - Progress bars for data processing
-- `ffmpeg-python` - Audio extraction from MP4 files
-
-### 4. Configure Environment Variables
-
-Create a `.env` file from the template:
-
-```bash
-cp .env.example .env
-```
-
-Edit the `.env` file and add your OpenAI API key:
-
-```
-OPENAI_API_KEY=sk-your-actual-api-key-here
-```
-
-⚠️ **Important**: Never commit your `.env` file to version control. It's already listed in `.gitignore`.
-
-#### Configuration Options
-
-The application supports the following configuration parameters (all optional except `OPENAI_API_KEY`):
-
-**OpenAI API Settings:**
-- `OPENAI_API_KEY` (required): Your OpenAI API key from https://platform.openai.com/api-keys
-- `GPT_MODEL` (default: `gpt-4`): Model for answer generation. Options: `gpt-4`, `gpt-4-turbo`, `gpt-3.5-turbo`
-- `EMBEDDING_MODEL` (default: `text-embedding-3-small`): Model for embeddings. Options: `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002`
-- `WHISPER_MODEL` (default: `whisper-1`): Model for audio transcription
-
-**Directory Paths:**
-- `DATA_DIR` (default: `./data`): Location of source documents (PDFs and MP4 files)
-- `CHROMA_DB_DIR` (default: `./embeddings`): Vector database storage location
-
-**Text Processing:**
-- `CHUNK_SIZE` (default: `1000`): Maximum size of text chunks in characters. Larger chunks provide more context but may reduce retrieval precision.
-- `CHUNK_OVERLAP` (default: `200`): Character overlap between chunks to maintain context continuity
-
-**Retrieval:**
-- `TOP_K` (default: `5`): Number of most relevant chunks to retrieve per query. Higher values provide more context but increase token usage and cost.
-
-See `.env.example` for a complete configuration template with detailed comments.
-
-## Usage
-
-### Building the Index
-
-After adding your PDF and MP4 files to the `data/` directory:
-
-```bash
-# Build or update the index (incremental, default collection)
+# Build or update index
 python -m scripts.build_index build
 
-# Build a specific collection
+# Build specific collection
 python -m scripts.build_index build --collection transcripts
 
-# Rebuild from scratch (if you changed chunking parameters)
+# Rebuild from scratch (after config changes)
 python -m scripts.build_index build --rebuild
 
 # Check all collection statistics
 python -m scripts.build_index stats
 
-# Check specific collection stats
-python -m scripts.build_index stats --collection ai_academy_course
-```
-
-**Output example:**
-```
-Found 1 PDF(s) and 1 MP4(s)
-Loading 1 PDF file(s)...
-✓ Databases for GenAI.pdf: 20 pages
-Processing 1 MP4 file(s)...
-✓ Using cached transcript for video.mp4
-✓ Created 51 chunks from 21 documents
-✓ Successfully indexed 51/51 new documents
-```
-
-### Querying the Chatbot
-
-After building the index, you can query the chatbot:
-
-```bash
-# Ask a question (default command)
-python -m scripts.legacy_chatbot "What is a vector database?"
-
-# Or use explicit query command
-python -m scripts.legacy_chatbot query "What is RAG?"
-
-# Retrieve more context chunks
-python -m scripts.legacy_chatbot query "How does retrieval work?" --top-k 10
-
-# Use custom log file
-python -m scripts.legacy_chatbot query "Explain embeddings" --log-file my_queries.log
-```
-
-The chatbot will:
-1. Retrieve the most relevant document chunks
-2. Generate an answer using GPT with context
-3. Display the answer with source citations
-4. Show relevance scores for retrieved chunks
-5. Log the full query and response to `queries.log`
-
-### Using the Agent Demo CLI
-
-The agent system includes an interactive demo CLI that showcases all capabilities:
-
-```bash
-# Ask the agent a question
-python -m scripts.demo ask "What is RAG?"
-
-# With verbose mode (shows reasoning steps)
-python -m scripts.demo ask "Calculate 15% of 250" --verbose
-
-# Save execution trace
-python -m scripts.demo ask "Complex query" --save-trace
-
-# Interactive REPL mode
-python -m scripts.demo interactive
-
-# Run pre-configured example demos
-python -m scripts.demo examples
-
 # Show detailed workflow visualization
 python -m scripts.demo workflow "How does RAG work?"
-
-# View system statistics
-python -m scripts.demo stats
 ```
 
-The agent demo features:
-- Rich terminal output with colors and formatting
-- Progress indicators during execution
-- Self-reflection and iterative refinement
-- Tool-calling capabilities (calculator, date, search, formatting)
-- Confidence scoring for answers
-- Complete execution traces
+## Demo Workflow
 
-📘 **For complete demo CLI guide, see [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md)**
+The agent uses a 7-phase pipeline for processing queries:
 
-### Testing Individual Components
+1. **Planning** - Decompose query and identify sub-tasks
+2. **Tool Selection** - Determine which tools are needed
+3. **Retrieval** - Search vector database for relevant context
+4. **Tool Execution** - Execute selected tools (calculator, date, etc.)
+5. **Generation** - Generate answer using retrieved context and tool results
+6. **Reflection** - Self-critique with confidence scoring
+7. **Revision** - Refine answer if confidence is low (iterative loop)
+
+### Workflow Visualization Example
+
+The `workflow` command shows the complete agent pipeline:
 
 ```bash
-# Test embeddings generation
-python -m rag.embeddings
-
-# Test document loading and chunking
-python -m rag.loaders
-
-# Test retrieval from index
-python -m rag.retriever
-
-# Test collection utilities
-python -m rag.collections
+python -m scripts.demo workflow "Compare RAG vs standard prompting"
 ```
 
-### Advanced Usage
+**Output includes:**
 
-```bash
-# Use custom parameters (requires rebuild)
-CHUNK_SIZE=1500 CHUNK_OVERLAP=300 python -m scripts.build_index build --rebuild
+- Step-by-step reasoning breakdown
+- Retrieved documents with relevance scores
+- Tool calls and results (if any)
+- Reflection feedback and confidence score
+- Workflow summary table showing all phases
+- Final answer with metadata
 
-# Use different embedding model
-EMBEDDING_MODEL=text-embedding-3-large python -m scripts.build_index build --rebuild
+**Sample workflow table:**
 
-# Get more retrieval results
-TOP_K=10 python -c "from rag.retriever import retrieve_relevant_chunks; ..."
 ```
-
-### Query Logging
-
-All chatbot queries are automatically logged to `queries.log` in the project root directory. Each log entry includes:
-
-- **Timestamp**: When the query was made
-- **Question**: The user's original question
-- **Answer**: The generated response
-- **Sources**: List of source files used (PDFs and MP4s)
-- **Retrieved Chunks**: Details of each chunk including relevance scores
-- **Metadata**: Model used and time elapsed
-
-**Example log entry format:**
+┌───┬──────────┬─────────────────────────────────────────┐
+│ # │ Type     │ Summary                                 │
+├───┼──────────┼─────────────────────────────────────────┤
+│ 1 │ plan     │ Decomposed query into comparison task   │
+│ 2 │ retrieve │ Retrieved 5 docs from ai_academy_course │
+│ 3 │ generate │ Generated 520 chars answer              │
+│ 4 │ reflect  │ Confidence: 0.88 - Answer is complete   │
+└───┴──────────┴─────────────────────────────────────────┘
 ```
-================================================================================
-TIMESTAMP: 2025-11-18 14:30:22
-================================================================================
-QUESTION: What is RAG?
-...
-ANSWER:
-Retrieval-Augmented Generation (RAG) is...
-...
-SOURCES (2 file(s)):
-  - lecture_notes.pdf
-  - course_video.mp4
-...
-```
-
-**Custom log file:**
-```bash
-python -m scripts.legacy_chatbot query "question" --log-file custom_queries.log
-```
-
-📘 **For the complete command reference with troubleshooting guides, see [COMMANDS.md](COMMANDS.md)**
-
-## Common Commands
-
-### Index Management
-
-| Command | Purpose |
-|---------|---------|
-| `python -m scripts.build_index build` | Build or update the search index (default collection) |
-| `python -m scripts.build_index build --collection NAME` | Build or update a specific collection |
-| `python -m scripts.build_index stats` | Show all collection statistics |
-| `python -m scripts.build_index stats --collection NAME` | Show specific collection statistics |
-| `python -m scripts.build_index build --rebuild` | Rebuild index from scratch |
-| `python -m scripts.build_index clear --collection NAME --yes` | Delete all documents from a collection |
-
-### Chatbot Queries
-
-| Command | Purpose |
-|---------|---------|
-| `python -m scripts.legacy_chatbot "question"` | Ask a question (default command) |
-| `python -m scripts.legacy_chatbot query "question"` | Ask a question (explicit) |
-| `python -m scripts.legacy_chatbot query "question" --top-k 10` | Retrieve more context chunks |
-| `python -m scripts.legacy_chatbot query "question" --log-file path` | Use custom log file |
-| `python -m scripts.legacy_chatbot build-index` | Build index via chatbot CLI |
-
-### Agent Demo CLI
-
-| Command | Purpose |
-|---------|---------|
-| `python -m scripts.demo ask "question"` | Ask the agent a question |
-| `python -m scripts.demo ask "question" --verbose` | Show detailed reasoning steps |
-| `python -m scripts.demo ask "question" --save-trace` | Save execution trace |
-| `python -m scripts.demo interactive` | Start interactive REPL mode |
-| `python -m scripts.demo examples` | Run pre-configured demo queries |
-| `python -m scripts.demo workflow "question"` | Show detailed workflow visualization |
-| `python -m scripts.demo stats` | Display system statistics |
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is open source and available under the MIT License.
+MIT License - Open source and available for modification.

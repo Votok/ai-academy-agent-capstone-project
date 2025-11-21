@@ -68,6 +68,37 @@ def display_sources(state):
     console.print(f"\n[dim]Total sources retrieved: {len(all_sources)}[/dim]")
 
 
+def display_tools_used(state):
+    """Display tools that were called during execution"""
+    # Extract tool calls from reasoning steps
+    tool_steps = state.get_steps_by_type("tool_call")
+    if not tool_steps:
+        return
+
+    all_tools = []
+    for step in tool_steps:
+        tools = step.metadata.get("tools", [])
+        all_tools.extend(tools)
+
+    if not all_tools:
+        return
+
+    # Display tools table
+    console.print("\n" + "="*60)
+    console.print("[bold cyan]🔧 Tools Used:[/bold cyan]")
+    console.print("="*60 + "\n")
+
+    tools_table = Table()
+    tools_table.add_column("#", style="cyan", width=4)
+    tools_table.add_column("Tool Name", style="green")
+
+    for idx, tool_name in enumerate(all_tools, 1):
+        tools_table.add_row(str(idx), tool_name)
+
+    console.print(tools_table)
+    console.print(f"\n[dim]Total tools called: {len(all_tools)}[/dim]")
+
+
 @app.command()
 def ask(
     query: str = typer.Argument(..., help="Your question"),
@@ -118,7 +149,8 @@ def ask(
     # Display metadata
     console.print("\n" + "-"*60)
     console.print(f"[dim]Confidence: {state.confidence_score:.2f} | "
-                  f"Iterations: {state.iteration} | "
+                  f"Attempts: {state.total_attempts} | "
+                  f"Revisions: {state.iteration} | "
                   f"Steps: {len(state.reasoning_steps)}[/dim]")
 
     # Save trace if requested
@@ -168,7 +200,9 @@ def interactive():
         console.print(f"\n[bold green]Agent:[/bold green]")
         md = Markdown(state.current_answer)
         console.print(md)
-        console.print(f"\n[dim]Confidence: {state.confidence_score:.2f}[/dim]")
+        console.print(f"\n[dim]Confidence: {state.confidence_score:.2f} | "
+                      f"Attempts: {state.total_attempts} | "
+                      f"Revisions: {state.iteration}[/dim]")
 
 
 @app.command()
@@ -235,7 +269,9 @@ def examples():
             console.print("\n[bold green]Answer:[/bold green]")
             md = Markdown(state.current_answer)
             console.print(md)
-            console.print(f"\n[dim]Confidence: {state.confidence_score:.2f} | Iterations: {state.iteration}[/dim]")
+            console.print(f"\n[dim]Confidence: {state.confidence_score:.2f} | "
+                          f"Attempts: {state.total_attempts} | "
+                          f"Revisions: {state.iteration}[/dim]")
 
             if i < len(examples_list):
                 if not typer.confirm("\nContinue to next example?", default=True):
@@ -299,6 +335,9 @@ def workflow(
 
     console.print(steps_table)
 
+    # Display tools used
+    display_tools_used(state)
+
     # Final answer
     console.print("\n[bold green]🎯 Final Answer:[/bold green]")
     md = Markdown(state.current_answer)
@@ -308,7 +347,8 @@ def workflow(
     display_sources(state)
 
     console.print(f"\n[dim]Total Steps: {len(state.reasoning_steps)} | "
-                  f"Iterations: {state.iteration} | "
+                  f"Attempts: {state.total_attempts} | "
+                  f"Revisions: {state.iteration} | "
                   f"Confidence: {state.confidence_score:.2f}[/dim]")
 
 

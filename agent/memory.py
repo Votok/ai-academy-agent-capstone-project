@@ -28,6 +28,7 @@ class AgentState:
     current_answer: Optional[str] = None
     confidence_score: float = 0.0
     iteration: int = 0
+    total_attempts: int = 0
     max_iterations: int = 5
     is_complete: bool = False
     reflection_feedback: List[str] = field(default_factory=list)
@@ -52,10 +53,14 @@ class AgentState:
         return [step for step in self.reasoning_steps if step.step_type == step_type]
 
     def increment_iteration(self) -> None:
-        """Move to next iteration"""
+        """Move to next iteration (revision)"""
         self.iteration += 1
         if self.iteration >= self.max_iterations:
             self.is_complete = True
+
+    def increment_attempt(self) -> None:
+        """Increment total workflow attempts counter"""
+        self.total_attempts += 1
 
     def should_continue(self) -> bool:
         """Check if agent should continue iterating"""
@@ -69,7 +74,8 @@ class AgentState:
         """Convert to dictionary for logging"""
         return {
             "query": self.query,
-            "iterations": self.iteration,
+            "attempts": self.total_attempts,
+            "revisions": self.iteration,
             "confidence": self.confidence_score,
             "is_complete": self.is_complete,
             "steps": [

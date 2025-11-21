@@ -86,9 +86,9 @@ class AgentOrchestrator:
 
         # === Iterative Workflow Loop ===
         while state.should_continue():
-            iteration_num = state.iteration + 1
+            state.increment_attempt()
             if verbose:
-                print(f"\n🔄 Iteration {iteration_num}/{state.max_iterations}")
+                print(f"\n🔄 Attempt {state.total_attempts}/{state.max_iterations}")
 
             # === RETRIEVAL ===
             if verbose:
@@ -147,7 +147,7 @@ class AgentOrchestrator:
         if verbose:
             print(f"\n{'='*60}")
             print(f"🎯 Workflow Complete")
-            print(f"Iterations: {state.iteration}")
+            print(f"Attempts: {state.total_attempts} | Revisions: {state.iteration}")
             print(f"Confidence: {state.confidence_score:.2f}")
             print(f"{'='*60}\n")
 
@@ -479,7 +479,7 @@ if __name__ == "__main__":
     print("="*60)
     print(state.current_answer)
     print(f"\n📊 Confidence: {state.confidence_score:.2f}")
-    print(f"🔄 Iterations: {state.iteration}")
+    print(f"🔄 Attempts: {state.total_attempts} | Revisions: {state.iteration}")
 
     # Save trace
     trace_path = orchestrator.save_trace(state)

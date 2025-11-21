@@ -31,6 +31,43 @@ app = typer.Typer(help="🤖 AI Academy Agent Demo")
 console = Console()
 
 
+def display_sources(state):
+    """Display retrieved sources in a formatted table"""
+    # Extract sources from retrieve steps
+    retrieve_steps = state.get_steps_by_type("retrieve")
+    if not retrieve_steps:
+        return
+
+    all_sources = []
+    for step in retrieve_steps:
+        sources = step.metadata.get("sources", [])
+        all_sources.extend(sources)
+
+    if not all_sources:
+        return
+
+    # Display sources table
+    console.print("\n" + "="*60)
+    console.print("[bold cyan]📚 Retrieved Sources:[/bold cyan]")
+    console.print("="*60 + "\n")
+
+    sources_table = Table()
+    sources_table.add_column("#", style="cyan", width=4)
+    sources_table.add_column("Document", style="green")
+    sources_table.add_column("Page", style="yellow", width=8)
+    sources_table.add_column("Type", style="dim", width=8)
+
+    for idx, source in enumerate(all_sources, 1):
+        doc_name = source.get("source", "unknown")
+        page = str(source.get("page", "-"))
+        source_type = source.get("source_type", "unknown")
+
+        sources_table.add_row(str(idx), doc_name, page, source_type)
+
+    console.print(sources_table)
+    console.print(f"\n[dim]Total sources retrieved: {len(all_sources)}[/dim]")
+
+
 @app.command()
 def ask(
     query: str = typer.Argument(..., help="Your question"),
@@ -74,6 +111,9 @@ def ask(
     # Render as markdown
     md = Markdown(state.current_answer)
     console.print(md)
+
+    # Display retrieved sources
+    display_sources(state)
 
     # Display metadata
     console.print("\n" + "-"*60)
@@ -263,6 +303,9 @@ def workflow(
     console.print("\n[bold green]🎯 Final Answer:[/bold green]")
     md = Markdown(state.current_answer)
     console.print(md)
+
+    # Display retrieved sources
+    display_sources(state)
 
     console.print(f"\n[dim]Total Steps: {len(state.reasoning_steps)} | "
                   f"Iterations: {state.iteration} | "

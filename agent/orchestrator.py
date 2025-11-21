@@ -11,7 +11,7 @@ from agent.reasoning import ReasoningPlanner
 from agent.reflection import SelfReflectionCritic
 from agent.prompts import AGENT_SYSTEM_PROMPT, format_answer_prompt, format_revision_prompt
 from agent.logger import AgentLogger
-from rag.retriever import retrieve_relevant_chunks
+from rag.retriever import retrieve_relevant_chunks, format_retrieved_chunks
 from rag.config import (
     OPENAI_API_KEY,
     AGENT_MODEL,
@@ -193,7 +193,7 @@ class AgentOrchestrator:
                 results = retrieve_relevant_chunks(
                     query=query,
                     collection_name=collection,
-                    top_k=3
+                    top_k=TOP_K
                 )
                 all_docs.extend(results)
 
@@ -204,12 +204,27 @@ class AgentOrchestrator:
                 if verbose:
                     print(f"      {collection}: Error - {e}")
 
-        # Limit total docs
-        all_docs = all_docs[:TOP_K]
+        # Limit total docs to avoid overwhelming context (allow more from multiple collections)
+        max_total_docs = TOP_K * 2
+        all_docs = all_docs[:max_total_docs]
+
+        # Extract source information for display
+        sources = []
+        for doc in all_docs:
+            source_info = {
+                "source": doc.metadata.get("source", "unknown"),
+                "source_type": doc.metadata.get("source_type", "unknown")
+            }
+            if "page" in doc.metadata:
+                source_info["page"] = doc.metadata.get("page")
+            if "score" in doc.metadata:
+                source_info["score"] = doc.metadata.get("score")
+            sources.append(source_info)
 
         state.add_step("retrieve", f"Retrieved {len(all_docs)} documents", {
             "collections": collections,
-            "doc_count": len(all_docs)
+            "doc_count": len(all_docs),
+            "sources": sources
         })
 
         return all_docs
@@ -323,8 +338,13 @@ Consider:
     ) -> str:
         """Generation phase"""
 
-        # Prepare context
-        context_texts = [doc.page_content for doc in context_docs]
+        # Prepare context with source metadata for citations
+        # Use formatted chunks that include document names and page numbers
+        if context_docs:
+            formatted_context = format_retrieved_chunks(context_docs, include_scores=False)
+            context_texts = [formatted_context]
+        else:
+            context_texts = []
 
         # Add tool results to context
         if tool_results:

@@ -14,11 +14,11 @@ Your capabilities:
 Your approach:
 1. Understand the query carefully
 2. Retrieve relevant context
-3. Generate a thoughtful answer
+3. Generate a thoughtful answer with proper citations
 4. Reflect on quality
 5. Revise if needed
 
-Be accurate, clear, and helpful."""
+IMPORTANT: Always cite your sources with document names and page numbers. This builds trust and allows verification."""
 
 
 ANSWER_GENERATION_PROMPT = """Based on the retrieved context below, answer the user's query.
@@ -31,8 +31,19 @@ Retrieved Context:
 Your task:
 1. Synthesize the information from the context
 2. Answer the query directly and clearly
-3. Cite sources when relevant
-4. If information is insufficient, say so
+3. **ALWAYS cite sources** - include document name and page number for EVERY claim
+4. Use direct quotes when appropriate (with quotation marks)
+5. If information is insufficient, say so
+
+CITATION FORMAT:
+- For facts: "According to [document.pdf, page X], ..."
+- For direct quotes: "As stated in [document.pdf, page X]: 'quote here'"
+- For multiple sources: "This is supported by [doc1.pdf, page X] and [doc2.pdf, page Y]"
+
+EXAMPLE:
+"Retrieval-augmented generation (RAG) is a technique that enhances language models by retrieving relevant information from external sources [rag-intro.pdf, page 3]. As explained in [week2-embeddings.pdf, page 5]: 'RAG combines the strengths of retrieval systems and generative models.'"
+
+Remember: Each chunk header shows [Chunk X from source, page Y] - use this information to cite properly.
 
 Answer:"""
 
@@ -50,7 +61,15 @@ Reflection Feedback:
 Retrieved Context (may include new information):
 {context}
 
-Provide an improved answer that addresses the feedback:"""
+Provide an improved answer that addresses the feedback.
+
+IMPORTANT REMINDERS:
+- ALWAYS cite sources with document names and page numbers
+- Use format: [document.pdf, page X]
+- Include direct quotes when appropriate
+- Ensure every major claim has a citation
+
+Improved Answer:"""
 
 
 def format_answer_prompt(query: str, context: List[str]) -> str:

@@ -21,10 +21,11 @@ class ToolCategory(Enum):
 class ToolParameter:
     """Tool parameter specification"""
     name: str
-    type: str  # "string", "number", "boolean", "array"
+    type: str  # "string", "number", "boolean", "array", "object"
     description: str
     required: bool = True
     default: Optional[Any] = None
+    items_type: Optional[str] = None  # For array types: specify element type ("string", "object", "number", etc.)
 
 
 @dataclass
@@ -74,19 +75,29 @@ class BaseTool(ABC):
         }
 
         for param in self.get_parameters():
-            parameters_schema["properties"][param.name] = {
+            param_schema = {
                 "type": param.type,
                 "description": param.description
             }
+
+            # Add items field for array types (required by OpenAI/JSON Schema)
+            if param.type == "array" and param.items_type:
+                param_schema["items"] = {"type": param.items_type}
+
+            parameters_schema["properties"][param.name] = param_schema
+
             if param.default is not None:
                 parameters_schema["properties"][param.name]["default"] = param.default
             if param.required:
                 parameters_schema["required"].append(param.name)
 
         return {
-            "name": self.name,
-            "description": self.get_description(),
-            "parameters": parameters_schema
+            "type": "function",
+            "function": {
+                "name": self.name,
+                "description": self.get_description(),
+                "parameters": parameters_schema
+            }
         }
 
     def __str__(self) -> str:

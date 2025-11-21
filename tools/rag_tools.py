@@ -71,14 +71,27 @@ class SearchVectorDBTool(BaseTool):
                     top_k=top_k
                 )
 
-            # Format results
+            # Format results with full source metadata
             formatted_results = []
             for doc in results:
-                formatted_results.append({
-                    "content": doc.page_content[:300] + "..." if len(doc.page_content) > 300 else doc.page_content,
+                # Increase content preview for better context (300 -> 800 chars)
+                content_preview = doc.page_content[:800] + "..." if len(doc.page_content) > 800 else doc.page_content
+
+                result_item = {
+                    "content": content_preview,
                     "source": doc.metadata.get("source", "unknown"),
                     "collection": doc.metadata.get("collection", collection)
-                })
+                }
+
+                # Add page number for PDFs
+                if "page" in doc.metadata:
+                    result_item["page"] = doc.metadata.get("page")
+
+                # Add source type for context
+                if "source_type" in doc.metadata:
+                    result_item["source_type"] = doc.metadata.get("source_type")
+
+                formatted_results.append(result_item)
 
             return ToolResult(
                 success=True,

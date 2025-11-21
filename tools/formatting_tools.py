@@ -20,6 +20,7 @@ class FormatAsTableTool(BaseTool):
             ToolParameter(
                 name="data",
                 type="array",
+                items_type="object",
                 description="List of dictionaries to format as table",
                 required=True
             )
@@ -63,6 +64,7 @@ class FormatAsBulletListTool(BaseTool):
             ToolParameter(
                 name="items",
                 type="array",
+                items_type="string",
                 description="List of items to format",
                 required=True
             )

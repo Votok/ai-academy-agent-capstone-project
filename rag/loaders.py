@@ -382,6 +382,7 @@ def _transcribe_audio_with_whisper(
                     transcript = client.audio.transcriptions.create(
                         model=WHISPER_MODEL,
                         file=audio_file,
+                        language="en",  # Force English transcription
                         response_format="text"
                     )
                     transcripts.append(transcript)
